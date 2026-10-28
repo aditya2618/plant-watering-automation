@@ -1,0 +1,67 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Set up Eyum Plant Care ESP32 Controller">
+  <title>Setup · Eyum Plant Care</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="setup-body">
+  <div class="setup-card card">
+    <div class="brand-group" style="margin-bottom: 1.25rem;">
+      <div class="brand-icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22v-9"/>
+          <path d="M12 13c-3-2-6-1-8 2 0-5 3-9 8-9s8 4 8 9c-2-3-5-4-8-2z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-eyebrow">FIRST-TIME SETUP</div>
+        <h1 class="brand-title">Connect Controller</h1>
+      </div>
+    </div>
+
+    <p class="section-description">
+      Connect your Eyum Plant Care controller to your home Wi-Fi network and set a local dashboard administrator password. All settings remain strictly local to your device.
+    </p>
+
+    <form id="provision-form" class="form-grid" style="grid-template-columns: 1fr;">
+      <div class="form-field">
+        <label for="wifi-ssid">Home Wi-Fi Network (SSID)</label>
+        <input id="wifi-ssid" type="text" required maxlength="32" placeholder="e.g. Home_Network" autocomplete="off">
+        <span class="field-hint">2.4 GHz Wi-Fi network name.</span>
+      </div>
+
+      <div class="form-field">
+        <label for="wifi-password">Wi-Fi Password</label>
+        <input id="wifi-password" type="password" maxlength="63" placeholder="••••••••" autocomplete="new-password">
+        <span class="field-hint">Leave empty if connecting to an open Wi-Fi network.</span>
+      </div>
+
+      <div class="form-field">
+        <label for="dashboard-password">Dashboard Admin Password</label>
+        <input id="dashboard-password" type="password" minlength="8" maxlength="63" required placeholder="Minimum 8 characters" autocomplete="new-password">
+        <span class="field-hint">Used to sign in to the dashboard as <code>admin</code>.</span>
+      </div>
+
+      <div class="form-field">
+        <label for="dashboard-password-confirm">Confirm Password</label>
+        <input id="dashboard-password-confirm" type="password" minlength="8" maxlength="63" required placeholder="Re-enter password" autocomplete="new-password">
+      </div>
+
+      <div style="margin-top: 0.5rem;">
+        <button class="btn btn-primary" type="submit" style="width: 100%;">
+          Save & Connect
+        </button>
+      </div>
+
+      <div class="message-container">
+        <p id="message" class="message-text"></p>
+      </div>
+    </form>
+  </div>
+
+  <script src="/setup.js"></script>
+</body>
+</html>
