@@ -1,4 +1,4 @@
-﻿#include "MoistureSensor.h"
+#include "MoistureSensor.h"
 
 #include <algorithm>
 
@@ -7,7 +7,7 @@ MoistureSensor::MoistureSensor(uint8_t analogPin, int8_t digitalPin)
 
 void MoistureSensor::begin() {
   analogReadResolution(12);
-  analogSetPinAttenuation(analogPin_, ADC_11db);
+  analogSetAttenuation(ADC_11db);
   if (digitalPin_ >= 0) {
     pinMode(digitalPin_, INPUT);
   }
