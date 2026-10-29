@@ -341,11 +341,87 @@ function setupEventListeners() {
       }
     });
   }
+
+  // Save Cloud Settings
+  const saveCloudBtn = byId('save-cloud');
+  if (saveCloudBtn) {
+    saveCloudBtn.addEventListener('click', async () => {
+      const payload = {
+        enabled: byId('cloud-enabled').checked,
+        host: byId('cloud-host').value.trim(),
+        port: +byId('cloud-port').value || 80,
+        useSsl: byId('cloud-ssl').checked,
+        deviceId: byId('cloud-device-id').value.trim(),
+        telemetryIntervalMs: Math.max(5000, (+byId('cloud-interval').value || 30) * 1000),
+      };
+      const secret = byId('cloud-device-secret').value.trim();
+      if (secret) payload.deviceSecret = secret;
+
+      try {
+        await api('/api/cloud', 'POST', payload);
+        showMessage('Cloud configuration saved. Reconnecting...', 'success');
+        setTimeout(loadCloudSettings, 1500);
+      } catch (error) {
+        showMessage(error.message, 'error');
+      }
+    });
+  }
+}
+
+async function loadCloudSettings() {
+  try {
+    const cloud = await api('/api/cloud');
+    if (byId('cloud-enabled')) byId('cloud-enabled').checked = !!cloud.enabled;
+    if (byId('cloud-host')) byId('cloud-host').value = cloud.host || '';
+    if (byId('cloud-port')) byId('cloud-port').value = cloud.port || 80;
+    if (byId('cloud-ssl')) byId('cloud-ssl').checked = !!cloud.useSsl;
+    if (byId('cloud-device-id')) byId('cloud-device-id').value = cloud.deviceId || '';
+    if (byId('cloud-interval')) byId('cloud-interval').value = Math.round((cloud.telemetryIntervalMs || 30000) / 1000);
+
+    updateCloudBadges(cloud);
+  } catch (error) {
+    console.warn('Could not load cloud settings:', error);
+  }
+}
+
+function updateCloudBadges(cloud) {
+  const badge = byId('cloud-badge');
+  const liveStatus = byId('cloud-live-status');
+
+  if (!cloud.enabled) {
+    if (badge) {
+      badge.textContent = 'Disabled';
+      badge.className = 'status-pill status-neutral';
+    }
+    if (liveStatus) {
+      liveStatus.textContent = 'Cloud Link Disabled';
+      liveStatus.style.color = 'var(--text-muted)';
+    }
+  } else if (cloud.connected) {
+    if (badge) {
+      badge.textContent = 'Connected (WSS)';
+      badge.className = 'status-pill status-active';
+    }
+    if (liveStatus) {
+      liveStatus.textContent = 'Online -> ' + cloud.host;
+      liveStatus.style.color = 'var(--plant-primary)';
+    }
+  } else {
+    if (badge) {
+      badge.textContent = 'Connecting...';
+      badge.className = 'status-pill status-caution';
+    }
+    if (liveStatus) {
+      liveStatus.textContent = 'Offline / Reconnecting to ' + (cloud.host || 'server');
+      liveStatus.style.color = 'var(--alert-danger)';
+    }
+  }
 }
 
 // Initial Boot
 document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
-  Promise.all([refreshStatus(), loadSettings()]).catch((err) => showMessage(err.message, 'error'));
+  Promise.all([refreshStatus(), loadSettings(), loadCloudSettings()]).catch((err) => showMessage(err.message, 'error'));
   setInterval(refreshStatus, 2000);
+  setInterval(loadCloudSettings, 6000);
 });

@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -219,6 +219,79 @@
           </div>
           <input id="wet-raw" type="number" min="0" max="4095" placeholder="e.g. 1500">
           <span class="field-hint">Typical reading when soil is freshly watered.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cloud Integration Card -->
+    <section class="card cloud-card">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">REMOTE CONNECTIVITY</span>
+          <h2 class="section-title">Eyum Cloud Settings</h2>
+        </div>
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+          <span id="cloud-badge" class="status-pill status-neutral">Offline</span>
+          <button id="save-cloud" class="btn btn-secondary" type="button">
+            Save Cloud Settings
+          </button>
+        </div>
+      </div>
+
+      <p class="section-description">
+        Link this plant care device directly to your central Eyum Cloud backend over persistent WebSockets. Enables real-time telemetry streaming, mobile alerts, and remote irrigation controls from anywhere.
+      </p>
+
+      <div class="calibration-live-bar">
+        <span>Cloud Bridge Status:</span>
+        <strong id="cloud-live-status" class="live-adc-tag">Checking...</strong>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field full-width">
+          <label class="toggle-switch">
+            <input id="cloud-enabled" type="checkbox">
+            <span class="slider"></span>
+            <span class="toggle-label">Enable Cloud WebSocket Link</span>
+          </label>
+        </div>
+
+        <div class="form-field">
+          <label for="cloud-host">Cloud Server Host / Domain</label>
+          <input id="cloud-host" type="text" placeholder="e.g. 80.225.212.191 or cloud.eyum.com">
+          <span class="field-hint">IP address or hostname of your Eyum cloud server.</span>
+        </div>
+
+        <div class="form-field">
+          <label for="cloud-port">Port</label>
+          <input id="cloud-port" type="number" min="1" max="65535" placeholder="80">
+          <span class="field-hint">Port 80 for WS, port 443 for TLS (WSS).</span>
+        </div>
+
+        <div class="form-field">
+          <label for="cloud-device-id">Device Identifier (device_id)</label>
+          <input id="cloud-device-id" type="text" placeholder="e.g. esp32-plant-care-01">
+          <span class="field-hint">Registered device identifier on the cloud.</span>
+        </div>
+
+        <div class="form-field">
+          <label for="cloud-device-secret">Device Secret Token</label>
+          <input id="cloud-device-secret" type="password" placeholder="Enter device secret token">
+          <span class="field-hint">Cryptographic token from cloud registration.</span>
+        </div>
+
+        <div class="form-field">
+          <label for="cloud-interval">Telemetry Interval (seconds)</label>
+          <input id="cloud-interval" type="number" min="5" max="3600" value="30">
+          <span class="field-hint">How often sensor readings are published (default 30s).</span>
+        </div>
+
+        <div class="form-field" style="justify-content: center;">
+          <label class="toggle-switch" style="margin-top: 1rem;">
+            <input id="cloud-ssl" type="checkbox">
+            <span class="slider"></span>
+            <span class="toggle-label">Use TLS / SSL (WSS)</span>
+          </label>
         </div>
       </div>
     </section>
