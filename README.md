@@ -1,4 +1,4 @@
-﻿# Eyum Plant Care
+# Eyum Plant Care
 
 Local-first ESP32 plant watering firmware with an elegant light botanical dashboard. The controller operates completely locally without cloud dependencies, running autonomous watering and safety algorithms directly on the ESP32.
 
@@ -72,7 +72,7 @@ pio device monitor --baud 115200
 
 ## First-Run Commissioning
 
-1. On first boot, connect to the setup Wi-Fi network shown in the serial monitor: `Eyum-Setup-XXXX`.
+1. On first boot, connect to the setup Wi-Fi network: `Eyum-Setup-XXXX` using default password **`12345678`**.
 2. Open `http://192.168.4.1` in your browser.
 3. Enter your home 2.4 GHz Wi-Fi credentials and create a dashboard password.
 4. Once connected, open `http://eyum-plant.local` (or the IP address from the serial log, e.g. `http://192.168.29.60`).

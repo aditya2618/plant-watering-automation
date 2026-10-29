@@ -35,10 +35,7 @@ String setupNetworkName() {
 }
 
 String setupNetworkPassword() {
-  const uint64_t chipId = ESP.getEfuseMac();
-  char password[16];
-  snprintf(password, sizeof(password), "Eyum%08X", static_cast<uint32_t>(chipId));
-  return String(password);
+  return "12345678";
 }
 
 void startSetupAccessPoint() {
