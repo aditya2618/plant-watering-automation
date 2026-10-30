@@ -1,4 +1,4 @@
-﻿const byId = (id) => document.getElementById(id);
+const byId = (id) => document.getElementById(id);
 let latestStatus = null;
 let latestSettings = null;
 const GAUGE_CIRCUMFERENCE = 427.26; // 2 * PI * 68
@@ -371,12 +371,15 @@ function setupEventListeners() {
 async function loadCloudSettings() {
   try {
     const cloud = await api('/api/cloud');
-    if (byId('cloud-enabled')) byId('cloud-enabled').checked = !!cloud.enabled;
-    if (byId('cloud-host')) byId('cloud-host').value = cloud.host || '';
-    if (byId('cloud-port')) byId('cloud-port').value = cloud.port || 80;
-    if (byId('cloud-ssl')) byId('cloud-ssl').checked = !!cloud.useSsl;
-    if (byId('cloud-device-id')) byId('cloud-device-id').value = cloud.deviceId || '';
-    if (byId('cloud-interval')) byId('cloud-interval').value = Math.round((cloud.telemetryIntervalMs || 30000) / 1000);
+    const isEditing = document.activeElement && document.activeElement.id && document.activeElement.id.startsWith('cloud-');
+    if (!isEditing) {
+      if (byId('cloud-enabled')) byId('cloud-enabled').checked = !!cloud.enabled;
+      if (byId('cloud-host')) byId('cloud-host').value = cloud.host || '';
+      if (byId('cloud-port')) byId('cloud-port').value = cloud.port || 80;
+      if (byId('cloud-ssl')) byId('cloud-ssl').checked = (cloud.port === 80) ? false : !!cloud.useSsl;
+      if (byId('cloud-device-id')) byId('cloud-device-id').value = cloud.deviceId || '';
+      if (byId('cloud-interval')) byId('cloud-interval').value = Math.round((cloud.telemetryIntervalMs || 30000) / 1000);
+    }
 
     updateCloudBadges(cloud);
   } catch (error) {
@@ -399,7 +402,7 @@ function updateCloudBadges(cloud) {
     }
   } else if (cloud.connected) {
     if (badge) {
-      badge.textContent = 'Connected (WSS)';
+      badge.textContent = cloud.useSsl ? 'Connected (WSS)' : 'Connected (WS)';
       badge.className = 'status-pill status-active';
     }
     if (liveStatus) {

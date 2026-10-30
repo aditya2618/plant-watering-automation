@@ -15,10 +15,8 @@ void CloudClient::begin(const CloudConfig& config) {
 
 void CloudClient::updateConfig(const CloudConfig& config) {
   config_ = config;
-  if (connected_) {
-    wsClient_.disconnect();
-    connected_ = false;
-  }
+  wsClient_.disconnect();
+  connected_ = false;
   if (config_.enabled) {
     connect();
   }
@@ -26,6 +24,11 @@ void CloudClient::updateConfig(const CloudConfig& config) {
 
 void CloudClient::connect() {
   if (config_.host.isEmpty() || config_.deviceId.isEmpty()) return;
+
+  // Port 80 is strictly plain HTTP/WS; port 443 is HTTPS/WSS
+  if (config_.port == 80) {
+    config_.useSsl = false;
+  }
 
   String url = "/ws/iot/?device_id=" + config_.deviceId + "&secret=" + config_.deviceSecret;
   Serial.printf("[Cloud] Connecting to %s:%u (SSL: %s) -> %s\n",
