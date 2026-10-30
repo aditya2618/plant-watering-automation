@@ -247,6 +247,33 @@
         <strong id="cloud-live-status" class="live-adc-tag">Checking...</strong>
       </div>
 
+      <!-- 1-Click Cloud Account Link -->
+      <div class="cloud-auto-claim-box" style="margin-bottom: 1.5rem; padding: 1.25rem; border-radius: 12px; background: rgba(45, 106, 79, 0.08); border: 1px dashed var(--plant-primary, #2D6A4F);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <h3 style="margin: 0; font-size: 1rem; color: var(--plant-primary, #2D6A4F); display: flex; align-items: center; gap: 0.5rem;">
+            <span>⚡ 1-Click Link with Eyum Cloud Account</span>
+          </h3>
+          <span style="font-size: 0.75rem; background: var(--plant-primary, #2D6A4F); color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 600;">Recommended</span>
+        </div>
+        <p style="margin: 0 0 1rem 0; font-size: 0.85rem; color: var(--text-secondary, #666);">
+          Log in with your Eyum Cloud account to automatically register this device and link remote mobile access without manual secret setup.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.75rem; align-items: end;">
+          <div class="form-field" style="margin: 0;">
+            <label for="claim-email" style="font-size: 0.8rem;">Cloud Account Email</label>
+            <input id="claim-email" type="email" placeholder="user@eyum.com" style="padding: 0.5rem 0.75rem;">
+          </div>
+          <div class="form-field" style="margin: 0;">
+            <label for="claim-password" style="font-size: 0.8rem;">Password</label>
+            <input id="claim-password" type="password" placeholder="Account password" style="padding: 0.5rem 0.75rem;">
+          </div>
+          <button id="btn-claim-cloud" class="btn btn-primary" type="button" style="white-space: nowrap; height: 38px;">
+            Link to My Account
+          </button>
+        </div>
+        <div id="claim-status-msg" style="display: none; margin-top: 0.75rem; font-size: 0.85rem; font-weight: 500;"></div>
+      </div>
+
       <div class="form-grid">
         <div class="form-field full-width">
           <label class="toggle-switch">

@@ -342,6 +342,110 @@ function setupEventListeners() {
     });
   }
 
+  // 1-Click Cloud Account Link
+  const claimBtn = byId('btn-claim-cloud');
+  if (claimBtn) {
+    claimBtn.addEventListener('click', async () => {
+      const email = byId('claim-email').value.trim();
+      const password = byId('claim-password').value;
+      const host = byId('cloud-host').value.trim() || '80.225.212.191';
+      const statusMsg = byId('claim-status-msg');
+
+      if (!email || !password) {
+        showMessage('Please enter your Eyum Cloud email and password', 'error');
+        return;
+      }
+
+      claimBtn.disabled = true;
+      claimBtn.textContent = 'Authenticating...';
+      if (statusMsg) {
+        statusMsg.style.display = 'block';
+        statusMsg.style.color = 'var(--plant-primary, #2D6A4F)';
+        statusMsg.textContent = 'Logging into Eyum Cloud...';
+      }
+
+      try {
+        const cloudOrigin = (host.startsWith('http://') || host.startsWith('https://')) ? host : `http://${host}`;
+        
+        // 1. Authenticate with cloud
+        const loginRes = await fetch(`${cloudOrigin}/api/auth/login/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const loginData = await loginRes.json();
+        if (!loginRes.ok) {
+          throw new Error(loginData.detail || loginData.error || 'Cloud authentication failed');
+        }
+
+        const token = loginData.tokens ? loginData.tokens.access : (loginData.access || loginData.token);
+        if (!token) throw new Error('No access token returned from cloud');
+
+        if (statusMsg) statusMsg.textContent = 'Registering device with your account...';
+
+        // 2. Determine device ID
+        let devId = byId('cloud-device-id').value.trim();
+        if (!devId) {
+          devId = 'esp32-plant-care-01';
+          byId('cloud-device-id').value = devId;
+        }
+
+        // 3. Register device to user's account
+        const regRes = await fetch(`${cloudOrigin}/api/iot/devices/register/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            project_slug: 'eyum-plant',
+            device_id: devId,
+            name: 'Eyum Plant Care',
+            device_type: 'esp32_plant_care'
+          })
+        });
+        const regData = await regRes.json();
+        if (!regRes.ok) {
+          throw new Error(regData.device_id ? `Device ${devId} is already registered.` : (regData.detail || regData.error || 'Registration failed'));
+        }
+
+        // 4. Save credentials to ESP32
+        if (statusMsg) statusMsg.textContent = 'Saving cloud credentials to device...';
+        byId('cloud-device-secret').value = regData.device_secret;
+        byId('cloud-enabled').checked = true;
+        byId('cloud-ssl').checked = false;
+
+        await api('/api/cloud', 'POST', {
+          enabled: true,
+          host: host,
+          port: 80,
+          useSsl: false,
+          deviceId: regData.device_id,
+          deviceSecret: regData.device_secret,
+          telemetryIntervalMs: 30000
+        });
+
+        if (statusMsg) {
+          statusMsg.style.color = '#2D6A4F';
+          statusMsg.textContent = '✓ Successfully registered and linked to your account! Connecting...';
+        }
+        showMessage('Successfully linked to your Eyum account!', 'success');
+        setTimeout(loadCloudSettings, 1500);
+
+      } catch (err) {
+        if (statusMsg) {
+          statusMsg.style.display = 'block';
+          statusMsg.style.color = 'var(--alert-danger, #d9534f)';
+          statusMsg.textContent = '✗ ' + err.message;
+        }
+        showMessage(err.message, 'error');
+      } finally {
+        claimBtn.disabled = false;
+        claimBtn.textContent = 'Link to My Account';
+      }
+    });
+  }
+
   // Save Cloud Settings
   const saveCloudBtn = byId('save-cloud');
   if (saveCloudBtn) {
